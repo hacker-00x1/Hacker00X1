@@ -1,9 +1,13 @@
 import { Layout } from "@/components/layout";
 import { GlitchText } from "@/components/cyber-effects";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 export default function About() {
+  const { data: about, isLoading: loadingAbout } = useQuery({ queryKey: ["/api/about"] });
+
   return (
     <Layout>
       <div className="max-w-4xl mx-auto">
@@ -68,24 +72,24 @@ export default function About() {
                 <span className="ml-2 text-xs text-muted-foreground">user@hacker00x1:~/profile</span>
               </div>
               <div className="p-6 text-sm md:text-base space-y-4 text-gray-300">
-                <p>
-                  <span className="text-primary">user@hacker00x1:~$</span> cat intro.txt
-                </p>
-                <p className="leading-relaxed">
-                  Hello! I'm <span className="text-white font-bold">Hacker00X1</span>. I specialize in finding security vulnerabilities in web applications and securing digital infrastructure.
-                </p>
-                <p className="leading-relaxed">
-                  My journey started 3 years ago when I found my first XSS on a public program. Since then, I've reported over 100+ valid bugs to various companies including Google, Meta, and Yahoo.
-                </p>
-                <p>
-                  <span className="text-primary">user@hacker00x1:~$</span> cat philosophy.txt
-                </p>
-                <p className="leading-relaxed italic border-l-2 border-primary/50 pl-4 my-4">
-                  "Security is not a product, but a process. It's about mindset, persistence, and creative thinking."
-                </p>
-                <p>
-                  <span className="text-primary">user@hacker00x1:~$</span> <span className="animate-pulse">_</span>
-                </p>
+                {loadingAbout ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                    <span className="text-xs text-muted-foreground font-mono">Loading profile data...</span>
+                  </div>
+                ) : (
+                  <>
+                    <p>
+                      <span className="text-primary">user@hacker00x1:~$</span> cat bio.txt
+                    </p>
+                    <div className="leading-relaxed whitespace-pre-wrap font-mono">
+                      {about?.content || "No profile data found."}
+                    </div>
+                    <p>
+                      <span className="text-primary">user@hacker00x1:~$</span> <span className="animate-pulse">_</span>
+                    </p>
+                  </>
+                )}
               </div>
             </Card>
           </div>

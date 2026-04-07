@@ -3,23 +3,26 @@ import { GlitchText } from "@/components/cyber-effects";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, ArrowUpRight, ArrowLeft, ArrowRight, Heart } from "lucide-react";
+import { Calendar, Clock, ArrowUpRight, ArrowLeft, ArrowRight, Heart, Loader2 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useState, useEffect } from "react";
-import { BLOG_POSTS } from "@/lib/data";
-
-const POSTS = BLOG_POSTS;
+import { useQuery } from "@tanstack/react-query";
 
 export default function Blog() {
   const PAGE_SIZE = 8;
   const [, setLocation] = useLocation();
+  
+  const { data: POSTS = [], isLoading } = useQuery({
+    queryKey: ["/api/blogs"],
+  });
+
   const totalPages = Math.ceil(POSTS.length / PAGE_SIZE);
   const initialPage = (() => {
     try {
       const params = new URLSearchParams(window.location.search);
       const p = parseInt(params.get("page") || "1", 10);
       if (isNaN(p)) return 1;
-      return Math.min(Math.max(1, p), totalPages);
+      return Math.min(Math.max(1, p), totalPages || 1);
     } catch {
       return 1;
     }
@@ -27,6 +30,16 @@ export default function Blog() {
   const [page, setPage] = useState(initialPage);
   const start = (page - 1) * PAGE_SIZE;
   const visible = POSTS.slice(start, start + PAGE_SIZE);
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   function LikeControl({ id }) {
     const [likes, setLikes] = useState(0);
@@ -80,8 +93,8 @@ export default function Blog() {
 
         <div className="grid gap-6 md:grid-cols-2">
           {visible.map((post) => (
-            <Card key={post.id} className="card-glow overflow-hidden group">
-              <div className="absolute top-0 left-0 w-1 h-full bg-primary/0 group-hover:bg-primary transition-all duration-300" />
+            <Card key={post.id} className="card-glow relative overflow-hidden group">
+              <div className="absolute bottom-0 left-0 w-1 h-1/2 bg-primary/0 group-hover:bg-primary transition-all duration-300 z-10" />
               <div className="relative h-40 md:h-52 overflow-hidden">
                 <img
                   src={post.image ?? "/image/cyber-hero.png"}

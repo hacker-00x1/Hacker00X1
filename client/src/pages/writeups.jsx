@@ -4,14 +4,18 @@ import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight, FileText, Shield, Bug, ArrowLeft, ArrowRight, Heart } from "lucide-react";
-import { WRITEUPS } from "@/lib/data";
+import { ArrowUpRight, FileText, Shield, Bug, ArrowLeft, ArrowRight, Heart, Loader2 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Writeups() {
   const [location, setLocation] = useLocation();
   const PAGE_SIZE = 8;
+
+  const { data: WRITEUPS = [], isLoading } = useQuery({
+    queryKey: ["/api/writeups"],
+  });
   
   // Use state for page to ensure reactivity
   const [page, setPage] = useState(() => {
@@ -47,6 +51,16 @@ export default function Writeups() {
 
   const start = (page - 1) * PAGE_SIZE;
   const visible = WRITEUPS.slice(start, start + PAGE_SIZE);
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
@@ -121,8 +135,8 @@ export default function Writeups() {
 
         <div className="grid gap-6 md:grid-cols-2 mb-12">
           {visible.map((post) => (
-            <Card key={post.id} className="overflow-hidden group border border-primary/20 bg-black">
-              <div className="absolute top-0 left-0 w-1 h-full bg-primary/0 group-hover:bg-primary transition-all duration-300" />
+            <Card key={post.id} className="relative overflow-hidden group border border-primary/20 bg-black">
+              <div className="absolute bottom-0 left-0 w-1 h-1/2 bg-primary/0 group-hover:bg-primary transition-all duration-300 z-10" />
               <div className="relative h-64 overflow-hidden border-b border-primary/20">
                 <img
                   src={post.image ?? "/image/cyber-hero.png"}
@@ -132,21 +146,22 @@ export default function Writeups() {
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-background/80 to-background" />
               </div>
               <CardHeader>
-                <div className="flex flex-wrap gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-2">
                   <Badge variant="outline" className="text-primary border-primary/50 font-mono text-xs rounded-none">
                     {post.category}
                   </Badge>
-                  <Badge
-                    variant="outline"
-                    className={`font-mono text-xs rounded-none border-opacity-50 ${
-                      (post.severity || post.difficulty) === 'Critical' ? 'text-red-500 border-red-500' :
-                      (post.severity || post.difficulty) === 'High' ? 'text-red-400 border-red-400' :
-                      (post.severity || post.difficulty) === 'Medium' ? 'text-yellow-400 border-yellow-400' :
-                      'text-green-400 border-green-400'
-                    }`}
-                  >
-                    {post.severity || post.difficulty || 'Low'}
-                  </Badge>
+                  {post.severity && (
+                    <Badge 
+                      className={`text-[10px] uppercase font-bold rounded-none ${
+                        post.severity === "Critical" ? "bg-red-600 text-white" :
+                        post.severity === "High" ? "bg-orange-500 text-white" :
+                        post.severity === "Medium" ? "bg-yellow-500 text-black" :
+                        "bg-blue-500 text-white"
+                      }`}
+                    >
+                      {post.severity}
+                    </Badge>
+                  )}
                 </div>
                 <CardTitle className="text-2xl font-rajdhani font-bold text-white group-hover:text-primary transition-colors flex items-center gap-2">
                   {getIcon(post.category)}

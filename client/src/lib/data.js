@@ -10,7 +10,7 @@ export const WRITEUPS = [
     author: "BugHunter0x01",
     severity: "Critical",
     sourceUrl: "#",
-    image: "/writeup-images/RCE via Unrestricted File Upload in Enterprise CMS.png",
+    image: "/writeup-images/id1.png",
     content: `
 ## Introduction
 During a recent engagement on a security audit, I encountered a Content Management System (CMS) that allowed users to upload profile pictures. While file upload vulnerabilities are common, achieving full Remote Code Execution (RCE) often requires a chain of misconfigurations. This writeup details how I bypassed filters and executed arbitrary code on the server.
@@ -75,11 +75,10 @@ This vulnerability allowed for full system compromise. With root-level access to
     date: "2024-01-28",
     readTime: "5 min read",
     category: "Authentication",
-    difficulty: "Medium",
     author: "SecResearcher",
-    severity: "Medium",
+    severity: "High",
     sourceUrl: "#",
-    image: "/writeup-images/Bypassing 2FA with Race Conditions.png",
+    image: "/writeup-images/id2.png",
     content: `
 ## Summary
 I discovered a race condition vulnerability in the Two-Factor Authentication (2FA) mechanism of a financial application. This allowed me to bypass the OTP requirement and log in to any account given valid credentials, even without the 2FA code.
@@ -132,11 +131,10 @@ The impact is Significant. While the attacker still needs the user's password, t
     date: "2023-12-10",
     readTime: "6 min read",
     category: "API Security",
-    difficulty: "Medium",
     author: "AnonHacker",
     severity: "Critical",
     sourceUrl: "#",
-    image: "/writeup-images/IDOR leading to PII Leak of 10k Users.png",
+    image: "/writeup-images/id3.png",
     content: `
 ## What is IDOR?
 Insecure Direct Object References (IDOR) occur when an application provides direct access to objects based on user-supplied input. As a result of this vulnerability attackers can bypass authorization and access resources in the system directly, for example database records or files.
@@ -206,11 +204,10 @@ This is a **Critical** severity issue. It leads to a massive data breach of Pers
     date: "2023-11-05",
     readTime: "10 min read",
     category: "XSS",
-    difficulty: "High",
     author: "PayloadMaster",
     severity: "High",
     sourceUrl: "#",
-    image: "/writeup-images/Stored XSS in Comment Section WAF Bypass.png",
+    image: "/writeup-images/id4.png",
     content: `
 ## Context
 The target application had a comment section on blog posts. I tried standard XSS payloads like \`<script>alert(1)</script>\`, but they were blocked by a Web Application Firewall (WAF). The WAF was configured to detect common JavaScript keywords and HTML tags associated with XSS attacks.
@@ -269,11 +266,10 @@ Using the stolen session cookie, I was able to impersonate the administrator. Si
     date: "2023-10-22",
     readTime: "9 min read",
     category: "Injection",
-    difficulty: "High",
     author: "ZeroDayHunter",
     severity: "High",
     sourceUrl: "#",
-    image: "/writeup-images/Server-Side Template Injection Chained to RCE.png",
+    image: "/writeup-images/id5.png",
     content: `
 ## Introduction
 Server-Side Template Injection (SSTI) is a vulnerability where an attacker is able to inject native template syntax into a web page. When the server-side template engine parses the input, it may execute arbitrary code, leading to full system compromise.
@@ -335,11 +331,10 @@ The impact is **Critical**. SSTI chained to RCE allows an attacker to take full 
     date: "2023-09-14",
     readTime: "7 min read",
     category: "Authentication",
-    difficulty: "Medium",
     author: "CryptoAuditor",
     severity: "Medium",
     sourceUrl: "#",
-    image: "/writeup-images/Weak JWT Signing Key Allows Account Impersonation.png",
+    image: "/writeup-images/id6.png",
     content: `
 ## Introduction
 JSON Web Tokens (JWT) are a common way to handle authentication in modern web applications. They consist of three parts: a Header, a Payload, and a Signature. The signature is created by hashing the header and payload with a secret key. If this secret key is weak or exposed, an attacker can forge their own tokens.
@@ -423,11 +418,10 @@ By replacing my \`jwt\` cookie with the forged token, I gained full administrati
     date: "2024-03-01",
     readTime: "4 min read",
     category: "Infrastructure",
-    difficulty: "Low",
     author: "CloudSec",
     severity: "Low",
     sourceUrl: "#",
-    image: "/writeup-images/Subdomain Takeover via Unclaimed S3 Bucket.png",
+    image: "/writeup-images/id7.png",
     content: `
 ## Background
 Subdomain takeover occurs when a DNS record (like a CNAME) points to a service that is no longer active or has been deleted, allowing an attacker to claim that resource on the third-party service.
@@ -484,11 +478,10 @@ The impact of a subdomain takeover can be significant:
     date: "2024-02-20",
     readTime: "6 min read",
     category: "API Security",
-    difficulty: "High",
     author: "QLHunter",
     severity: "High",
     sourceUrl: "#",
-    image: "/writeup-images/GraphQL Introspection Leading to Hidden Admin API.png",
+    image: "/writeup-images/id8.png",
     content: `
 ## Introduction
 GraphQL is a powerful query language for APIs. Unlike REST, which has multiple endpoints, GraphQL typically has a single endpoint (\`/graphql\`). If "Introspection" is enabled, anyone can query the API for its entire schema, including all types, queries, and mutations.
@@ -568,11 +561,10 @@ Exposing an introspection-enabled GraphQL API with administrative mutations can 
     date: "2024-01-10",
     readTime: "3 min read",
     category: "Web Security",
-    difficulty: "Low",
     author: "RedTeamOne",
     severity: "Low",
     sourceUrl: "#",
-    image: "/writeup-images/Open Redirect on Login Page.png",
+    image: "/writeup-images/id9.png",
     content: `
 ## Vulnerability Overview
 An open redirect vulnerability occurs when an application takes user-supplied input and uses it in a redirect without proper validation. This can be used to trick users into visiting malicious websites while appearing to stay on a trusted domain.
@@ -620,11 +612,10 @@ While often considered "Low" severity, open redirects are powerful tools for:
     date: "2023-12-05",
     readTime: "8 min read",
     category: "Injection",
-    difficulty: "High",
     author: "DataBreaker",
     severity: "High",
     sourceUrl: "#",
-    image: "/writeup-images/SQL Injection in Search Filter.png",
+    image: "/writeup-images/id10.png",
     content: `
 ## The Endpoint
 The application featured a product search with multiple filters:
@@ -1135,7 +1126,7 @@ Client‑Side Template Injection (CSTI) happens in browser‑based template engi
 ## Uber AngularJS Template Injection
 [-] Difficulty: High
 [-] URL: https://developer.uber.com/
-[-] Source: https://hackerone.com/reports/125027/
+[-] Source: #
 [-] Date reported: March 22, 2016 Bounty paid: $3,000
 
 James Kettle found a CSTI bug on an Uber subdomain by injecting {{7*7}} into a URL and seeing it render as 49, proving AngularJS evaluated user input. Because the site used a vulnerable AngularJS version, he applied a Sandbox bypass to execute JavaScript (alert(1)), turning the CSTI into XSS. This showed how client‑side template injections can lead to serious risks like compromised developer accounts.

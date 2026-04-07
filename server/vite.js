@@ -20,7 +20,7 @@ export async function setupVite(server, app) {
       ...viteLogger,
       error: (msg, options) => {
         viteLogger.error(msg, options);
-        process.exit(1);
+        // Removed process.exit(1) to prevent server crash on Vite errors
       },
     },
     server: serverOptions,

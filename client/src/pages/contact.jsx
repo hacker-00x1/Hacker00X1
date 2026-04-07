@@ -7,7 +7,9 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, Mail, MessageSquare, User } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Contact() {
   const { toast } = useToast();
@@ -26,7 +28,8 @@ export default function Contact() {
     // I will simulate the request structure or use a placeholder action.
     
     try {
-        const response = await fetch("https://api.web3forms.com/submit", {
+        // Send to Web3Forms
+        await fetch("https://api.web3forms.com/submit", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -37,12 +40,10 @@ export default function Contact() {
                 ...data
             }),
         });
-        
-        // Mock success for the prototype since we don't have a real key
-        // In a real scenario we check response.ok
-        
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate delay
 
+        // Track in our local dashboard
+        await apiRequest("POST", "/api/contact", data);
+        
         toast({
             title: "Transmission Sent",
             description: "Your encrypted message has been received.",

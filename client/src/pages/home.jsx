@@ -42,7 +42,7 @@ export default function Home() {
           </h1>
           
           <div className="h-16 mb-8 text-xl md:text-2xl text-muted-foreground font-rajdhani font-medium">
-            <TerminalText text="Identifying vulnerabilities. Securing the future. Welcome to my digital fortress." typingSpeed={40} />
+            <TerminalText text="Iddentifying vulnerabilities. Securing the future. Welcome to my digital fortress." typingSpeed={40} />
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

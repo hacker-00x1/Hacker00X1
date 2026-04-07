@@ -1,26 +1,35 @@
 import { Layout } from "@/components/layout";
 import { GlitchText } from "@/components/cyber-effects";
 import { useRoute, Link, useLocation } from "wouter";
-import { BLOG_POSTS, WRITEUPS } from "@/lib/data";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardFooter, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Calendar, Clock, User, ArrowUpRight, Heart } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, User, ArrowUpRight, Heart, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import NotFound from "@/pages/not-found";
 
 export default function BlogPost() {
   const [blogMatch, blogParams] = useRoute("/blogs/:id");
   const [writeupMatch, writeupParams] = useRoute("/writeups/:id");
-  const match = blogMatch || writeupMatch;
+  const isBlog = !!blogMatch;
   const params = blogMatch ? blogParams : writeupParams;
   const [, setLocation] = useLocation();
 
-  const numericId = parseInt(params?.id ?? NaN);
-  const postFromBlogs = BLOG_POSTS.find(p => p.id === numericId);
-  const postFromWriteups = WRITEUPS.find(p => p.id === numericId);
-  const post = blogMatch ? postFromBlogs : postFromWriteups;
-  const isBlog = !!blogMatch;
+  const { data: post, isLoading, error } = useQuery({
+    queryKey: [isBlog ? `/api/blogs/${params?.id}` : `/api/writeups/${params?.id}`],
+    enabled: !!params?.id,
+  });
+
+  const { data: allBlogs = [] } = useQuery({
+    queryKey: ["/api/blogs"],
+    enabled: isBlog,
+  });
+
+  const { data: allWriteups = [] } = useQuery({
+    queryKey: ["/api/writeups"],
+    enabled: !isBlog,
+  });
+
   const [likes, setLikes] = useState(0);
   const [liked, setLiked] = useState(false);
 
@@ -55,30 +64,63 @@ export default function BlogPost() {
     }
   };
 
-  if (!match || !post) return <NotFound />;
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error || !post) return <NotFound />;
 
   function renderTextWithLinks(line) {
-    const normalized = line
-      .replace(/http:\/\/localhost:5000\/blog\/(\d+)(?![#\w])/g, "http://localhost:5000/blogs/$1#")
-      .replace(/http:\/\/localhost:5000\/blogs\/(\d+)(?![#\w])/g, "http://localhost:5000/blogs/$1#")
-      .replace(/http:\/\/localhost:5000\/blog\b/g, "http://localhost:5000/blogs");
     const pattern = /(https?:\/\/[^\s]+)/g;
-    const parts = normalized.split(pattern);
-    return parts.map((p, i) =>
-      p.startsWith("http://") || p.startsWith("https://")
-        ? (
+    const parts = line.split(pattern);
+    return parts.map((p, i) => {
+      if (p.startsWith("http://") || p.startsWith("https://")) {
+        try {
+          const url = new URL(p);
+          let path = url.pathname + (url.hash || "");
+          if (path.startsWith("/blog/")) {
+            path = path.replace("/blog/", "/blogs/");
+          }
+          const sameHost =
+            url.host === window.location.host ||
+            url.hostname === "localhost" ||
+            url.hostname === "127.0.0.1";
+          const isInternal =
+            sameHost && (path.startsWith("/blogs/") || path.startsWith("/writeups/"));
+          if (isInternal) {
+            return (
+              <Link
+                key={i}
+                href={path}
+                className="text-blue-500 no-underline visited:text-purple-500 hover:text-blue-400 break-all inline-block max-w-full"
+              >
+                {path}
+              </Link>
+            );
+          }
+        } catch {
+          // fall through to external anchor
+        }
+        return (
           <a
             key={i}
             href={p}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary underline hover:text-white break-all inline-block max-w-full"
+            className="text-blue-500 no-underline visited:text-purple-500 hover:text-blue-400 break-all inline-block max-w-full"
           >
             {p}
           </a>
-        )
-        : p
-    );
+        );
+      }
+      return p;
+    });
   }
   function SuggestedLikeControl({ id }) {
     const [likes, setLikes] = useState(0);
@@ -126,21 +168,21 @@ export default function BlogPost() {
       return m ? parseInt(m[1], 10) : NaN;
     };
     if (isChapter) {
-      const chapters = BLOG_POSTS
+      const chapters = allBlogs
         .filter(p => /^Chapter\s+\d+/i.test(p.title))
         .sort((a, b) => getChapterNum(a.title) - getChapterNum(b.title));
       const n = chapters.length;
       const currentIndex = chapters.findIndex(p => p.id === post.id);
-      suggestedPosts = [1, 2, 3].map(step => chapters[(currentIndex + step) % n]);
+      suggestedPosts = [1, 2, 3].map(step => chapters[(currentIndex + step) % n]).filter(Boolean);
     } else {
       const USER_AUTHOR = "Hacker00x1";
-      suggestedPosts = BLOG_POSTS
+      suggestedPosts = allBlogs
         .filter(p => p.author === USER_AUTHOR && p.id !== post.id)
         .sort((a, b) => new Date(b.date) - new Date(a.date))
         .slice(0, 3);
     }
   } else {
-    suggestedPosts = WRITEUPS
+    suggestedPosts = allWriteups
       .filter(p => p.id !== post.id)
       .sort(() => 0.5 - Math.random())
       .slice(0, 3);
@@ -168,7 +210,7 @@ export default function BlogPost() {
               decoding="async"
               sizes="100vw"
               srcSet={`${post.image ?? "/image/cyber-hero.png"} 1x, ${post.image ?? "/image/cyber-hero.png"} 2x`}
-              fetchpriority="high"
+              fetchPriority="high"
             />
           </div>
           <CardHeader className="space-y-4 border-b border-primary/20 pb-8 sticky top-0 z-30 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -253,7 +295,7 @@ export default function BlogPost() {
           <div className="grid gap-6 md:grid-cols-3">
             {suggestedPosts.map((suggestedPost) => (
               <Card key={suggestedPost.id} className="card-glow overflow-hidden group relative">
-                <div className="absolute top-0 left-0 w-1 h-full bg-primary/0 group-hover:bg-primary transition-all duration-300 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-1 h-1/2 bg-primary/0 group-hover:bg-primary transition-all duration-300 pointer-events-none z-10" />
                 <Link href={`${isBlog ? "/blogs" : "/writeups"}/${suggestedPost.id}`}>
                   <div className="relative h-24 sm:h-28 md:h-32 overflow-hidden cursor-pointer">
                     <img

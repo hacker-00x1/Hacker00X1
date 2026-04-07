@@ -1,7 +1,20 @@
 import express from "express";
 import { registerRoutes } from "./routes.js";
+import { setupAuth } from "./auth.js";
 import { serveStatic } from "./static.js";
 import { createServer } from "http";
+import { storage } from "./storage.js";
+import path from "path";
+
+process.on("uncaughtException", (err) => {
+  console.error("CRITICAL: Uncaught Exception:", err);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("CRITICAL: Unhandled Rejection at:", promise, "reason:", reason);
+  process.exit(1);
+});
 
 const app = express();
 const httpServer = createServer(app);
@@ -15,6 +28,12 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
+
+// Serve static files from the uploads directory
+app.use("/uploads", express.static(path.join(process.cwd(), "public", "uploads")));
+
+// Initialize auth middleware
+setupAuth(app);
 
 export function log(message, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -43,7 +62,15 @@ app.use((req, res, next) => {
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+        try {
+          let stringified = JSON.stringify(capturedJsonResponse);
+          if (stringified.length > 100) {
+            stringified = stringified.substring(0, 100) + "... (truncated)";
+          }
+          logLine += ` :: ${stringified}`;
+        } catch (e) {
+          logLine += ` :: [JSON Serialization Error]`;
+        }
       }
 
       log(logLine);
@@ -54,6 +81,7 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  await storage.init();
   await registerRoutes(httpServer, app);
 
   app.use((err, _req, res, next) => {

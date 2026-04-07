@@ -37,10 +37,13 @@ export const getQueryFn =
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
+      queryFn: (args) => {
+        const isUserCheck = args.queryKey[0] === "/api/user";
+        return getQueryFn({ on401: isUserCheck ? "returnNull" : "throw" })(args);
+      },
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
+      staleTime: 5000,
       retry: false,
     },
     mutations: {
