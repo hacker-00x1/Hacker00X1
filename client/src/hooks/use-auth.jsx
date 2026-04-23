@@ -38,6 +38,27 @@ export function AuthProvider({ children }) {
     },
   });
 
+  const registerMutation = useMutation({
+    mutationFn: async (credentials) => {
+      const res = await apiRequest("POST", "/api/register", credentials);
+      return await res.json();
+    },
+    onSuccess: (user) => {
+      queryClient.setQueryData(["/api/user"], user);
+      toast({
+        title: "Registration successful",
+        description: `Welcome, ${user.username}!`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Registration failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const logoutMutation = useMutation({
     mutationFn: async () => {
       await apiRequest("POST", "/api/logout");
@@ -58,6 +79,7 @@ export function AuthProvider({ children }) {
         isLoading,
         error,
         loginMutation,
+        registerMutation,
         logoutMutation,
       }}
     >

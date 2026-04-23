@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import { hashPassword } from "./crypto.js";
 
 class MemStorage {
   constructor() {
@@ -18,9 +19,10 @@ class MemStorage {
     const existingAdmin = await this.getUserByUsername("Hacker00X1");
     if (!existingAdmin) {
       console.log("[STORAGE] Initializing admin user...");
+      const hashedPassword = await hashPassword("Admin@Password123");
       await this.createUser({
         username: "Hacker00X1",
-        password: "Admin@Password123",
+        password: hashedPassword,
       });
       console.log(`[STORAGE] Admin user initialized. Total users: ${this.users.size}`);
     }

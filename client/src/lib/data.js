@@ -668,6 +668,112 @@ SQL injection is one of the most critical web vulnerabilities. It allows an atta
   }
 ];
 
+// About Me content
+export const ABOUT_ME = {
+  id: 1,
+  content: `Hello! I'm Hacker00X1. I specialize in finding security vulnerabilities in web applications and securing digital infrastructure.\n\nMy journey started 3 years ago when I found my first XSS on a public program. Since then, I've reported over 100+ valid bugs to various companies including Google, Meta, and Yahoo.\n\n"Security is not a product, but a process. It's about mindset, persistence, and creative thinking."`
+};
+
+// Recommended Books
+export const BOOKS = [
+  {
+    id: "1",
+    title: "Linux Basics for Hackers",
+    author: "OccupyTheWeb",
+    cover: "/Media/book-images/01.png",
+    desc: "Getting Started with Networking, Scripting, and Security in Kali.",
+    link: "/Media/pdf-books/Linux Basics for Hackers 2ed.pdf"
+  },
+  {
+    id: "2",
+    title: "Network Basics For Hackers",
+    author: "OccupyTheWeb",
+    cover: "/Media/book-images/02.png",
+    desc: "Computer Networking from a Hacker's Perspective.",
+    link: "/Media/pdf-books/Network Basics For Hackers.pdf"
+  },
+  {
+    id: "3",
+    title: "Getting Started Becoming a Master Hacker",
+    author: "OccupyTheWeb",
+    cover: "/Media/book-images/03.png",
+    desc: "Hacking is the most important skill set of the 21st century.",
+    link: "/Media/pdf-books/Getting Started Becoming a Master Hacker.pdf"
+  },
+  {
+    id: "4",
+    title: "Metasploit Basics for Hackers",
+    author: "OccupyTheWeb",
+    cover: "/Media/book-images/04.png",
+    desc: "The Guide to Using the World's Most Popular Penetration Testing Framework.",
+    link: "/Media/pdf-books/Metasploit Basics for Hackers.pdf"
+  },
+  {
+    id: "5",
+    title: "Black Hat Bash",
+    author: "Nick Aleks & Dolev Farhi",
+    cover: "/Media/book-images/05.png",
+    desc: "Creative scripting for hackers and pentesters.",
+    link: "/Media/pdf-books/Black Hat Bash.pdf"
+  },
+  {
+    id: "6",
+    title: "Black Hat Python",
+    author: "Justin Seitz & Tim Arnold",
+    cover: "/Media/book-images/06.png",
+    desc: "Python Programming for Hackers and Pentesters.",
+    link: "/Media/pdf-books/Black Hat Python, 2nd Edition.pdf"
+  },
+  {
+    id: "7",
+    title: "Bug Bounty Bootcamp",
+    author: "Vickie Li",
+    cover: "/Media/book-images/07.png",
+    desc: "The Guide to Finding and Reporting Web Vulnerabilities.",
+    link: "/Media/pdf-books/bugbounty-bootcamp.pdf"
+  },
+  {
+    id: "8",
+    title: "Penetration Testing",
+    author: "Georgia Weidman",
+    cover: "/Media/book-images/08.png",
+    desc: "A Hands-On Introduction to Hacking.",
+    link: "/Media/pdf-books/Penetration Testing.pdf"
+  },
+  {
+    id: "9",
+    title: "Real-World Bug Hunting",
+    author: "Peter Yaworski",
+    cover: "/Media/book-images/09.png",
+    desc: "A Field Guide to Web Hacking.",
+    link: "/Media/pdf-books/Real-world-bug-hunting.pdf"
+  },
+  {
+    id: "10",
+    title: "Hacking APIs",
+    author: "Corey J. Ball",
+    cover: "/Media/book-images/10.png",
+    desc: "Breaking web APIs: reconnaissance, auth, and exploitation.",
+    link: "/Media/pdf-books/Hacking APIs.pdf"
+  },
+  {
+    id: "11",
+    title: "Gray Hat Hacking",
+    author: "Allen Harper, Ryan Linn, Stephen Sims, Michael Baucom, Daniel Fernandez, Huáscar Tejeda, Moses Frost",
+    cover: "/Media/book-images/11.png",
+    desc: "The Ethical Hacker's Handbook.",
+    link: "/Media/pdf-books/gray hat hacking 6th edition.pdf"
+  },
+  {
+    id: "12",
+    title: "Social Engineering",
+    author: "Christopher Hadnagy",
+    cover: "/Media/book-images/12.png",
+    desc: "The Science of Human Hacking.",
+    link: "/Media/pdf-books/Social Engineering.pdf"
+  }
+];
+
 // Medium blog posts
 export const BLOG_POSTS = [
   {

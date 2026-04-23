@@ -11,15 +11,26 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { MatrixBackground } from "@/components/matrix-background";
 
 export default function LoginPage() {
-  const { user, loginMutation } = useAuth();
+  const { user, loginMutation, isLoading } = useAuth();
   const [, setLocation] = useLocation();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen w-full relative bg-black flex items-center justify-center">
+        <MatrixBackground />
+        <div className="relative z-10 text-cyan-500 font-mono text-xl animate-pulse">
+          INITIALIZING_AUTH_SESSION...
+        </div>
+      </div>
+    );
+  }
 
   if (user) {
     setLocation("/admin");
     return null;
   }
 
-  const form = useForm({
+  const loginForm = useForm({
     resolver: zodResolver(insertUserSchema),
     defaultValues: {
       username: "",
@@ -27,7 +38,7 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = (data) => {
+  const onLoginSubmit = (data) => {
     loginMutation.mutate(data);
   };
 
@@ -37,13 +48,13 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-md p-4">
         <Card className="bg-black/80 border-cyan-500/50 text-cyan-500 shadow-[0_0_20px_rgba(0,255,255,0.2)]">
           <CardHeader>
-            <CardTitle className="text-2xl font-mono text-center">ADMIN_PANEL</CardTitle>
+            <CardTitle className="text-2xl font-mono text-center tracking-tighter">ADMIN_ACCESS_ONLY</CardTitle>
           </CardHeader>
           <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <Form {...loginForm}>
+              <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                 <FormField
-                  control={form.control}
+                  control={loginForm.control}
                   name="username"
                   render={({ field }) => (
                     <FormItem>
@@ -59,7 +70,7 @@ export default function LoginPage() {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={loginForm.control}
                   name="password"
                   render={({ field }) => (
                     <FormItem>
@@ -77,7 +88,7 @@ export default function LoginPage() {
                 />
                 <Button 
                   type="submit" 
-                  className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-mono"
+                  className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-mono mt-6"
                   disabled={loginMutation.isPending}
                 >
                   {loginMutation.isPending ? "AUTHENTICATING..." : "AUTHENTICATE"}

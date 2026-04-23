@@ -16,11 +16,13 @@ export function TerminalText({ text, typingSpeed = 50 }) {
   const [displayedText, setDisplayedText] = React.useState("");
 
   React.useEffect(() => {
+    setDisplayedText(""); // Reset text when source text changes
     let index = 0;
     const intervalId = setInterval(() => {
-      setDisplayedText((prev) => prev + text.charAt(index));
-      index++;
-      if (index === text.length) {
+      if (index < text.length) {
+        setDisplayedText(text.slice(0, index + 1));
+        index++;
+      } else {
         clearInterval(intervalId);
       }
     }, typingSpeed);

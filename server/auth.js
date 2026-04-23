@@ -3,6 +3,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import session from "express-session";
 import MemoryStore from "memorystore";
 import { storage } from "./storage.js";
+import { comparePasswords, hashPassword } from "./crypto.js";
 
 import { loginLimiter } from "./middleware/rate-limit.js";
 
@@ -28,6 +29,14 @@ export function setupAuth(app) {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  // Log all session activity for debugging
+  app.use((req, res, next) => {
+    if (req.path === "/api/login" || req.path === "/api/user") {
+      console.log(`[SESSION] ${req.method} ${req.path} - SessionID: ${req.sessionID} - Auth: ${req.isAuthenticated()}`);
+    }
+    next();
+  });
+
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       try {
@@ -37,7 +46,8 @@ export function setupAuth(app) {
           console.log(`[AUTH] Failed: User "${username}" not found in storage.`);
           return done(null, false, { message: "Invalid username or password" });
         }
-        if (user.password !== password) {
+        const isMatch = await comparePasswords(password, user.password);
+        if (!isMatch) {
           console.log(`[AUTH] Failed: Password mismatch for user "${username}".`);
           return done(null, false, { message: "Invalid username or password" });
         }

@@ -3,11 +3,11 @@ import { GlitchText, TerminalText } from "@/components/cyber-effects";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, ShieldAlert, FileText, BookIcon, HelpCircle } from "lucide-react";
-import heroImage from "/image/cyber-hero.png";
 import { Link } from "wouter";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 
 export default function Home() {
+  const heroImage = "/image/cyber-hero.png";
   return (
     <Layout>
       <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden rounded-lg mb-16">
@@ -42,7 +42,7 @@ export default function Home() {
           </h1>
           
           <div className="h-16 mb-8 text-xl md:text-2xl text-muted-foreground font-rajdhani font-medium">
-            <TerminalText text="Iddentifying vulnerabilities. Securing the future. Welcome to my digital fortress." typingSpeed={40} />
+            <TerminalText text="Identifying vulnerabilities. Securing the future. Welcome to my digital fortress." typingSpeed={40} />
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

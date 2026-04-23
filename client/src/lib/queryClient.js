@@ -1,4 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
+import { BLOG_POSTS, WRITEUPS, BOOKS, ABOUT_ME } from "./data";
 
 async function throwIfResNotOk(res) {
   if (!res.ok) {
@@ -22,16 +23,43 @@ export async function apiRequest(method, url, data) {
 export const getQueryFn =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/"), {
-      credentials: "include",
-    });
+    try {
+      const res = await fetch(queryKey.join("/"), {
+        credentials: "include",
+      });
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
+      if (unauthorizedBehavior === "returnNull" && res.status === 401) {
+        return null;
+      }
+
+      await throwIfResNotOk(res);
+      return await res.json();
+    } catch (error) {
+      // Fallback for static hosting (Netlify/GitHub Pages) where the backend is missing
+      const url = queryKey[0];
+      
+      if (url === "/api/blogs") return BLOG_POSTS;
+      if (url === "/api/writeups") return WRITEUPS;
+      if (url === "/api/books") return BOOKS;
+      if (url === "/api/about") return ABOUT_ME;
+
+      // Handle detail views (e.g., /api/blogs/101)
+      if (url.startsWith("/api/blogs/")) {
+        const id = parseInt(url.split("/").pop());
+        return BLOG_POSTS.find(b => b.id === id) || null;
+      }
+      if (url.startsWith("/api/writeups/")) {
+        const id = parseInt(url.split("/").pop());
+        return WRITEUPS.find(w => w.id === id) || null;
+      }
+      if (url.startsWith("/api/books/")) {
+        const id = url.split("/").pop();
+        return BOOKS.find(b => b.id === id) || null;
+      }
+
+      // If no fallback, rethrow the error
+      throw error;
     }
-
-    await throwIfResNotOk(res);
-    return await res.json();
   };
 
 export const queryClient = new QueryClient({
